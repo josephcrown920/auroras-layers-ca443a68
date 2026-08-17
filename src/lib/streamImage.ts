@@ -5,7 +5,7 @@ function toDataUrl(b64: string) {
 }
 
 function extractB64(payload: unknown): string | null {
-  const p = payload as Record<string, any> | null;
+  const p = payload as any;
   if (!p) return null;
   return (
     p.b64_json ??
@@ -16,6 +16,7 @@ function extractB64(payload: unknown): string | null {
     null
   );
 }
+
 
 /**
  * POSTs a prompt (plus optional source image) to a streaming image route and
