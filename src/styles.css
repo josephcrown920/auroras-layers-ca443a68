@@ -106,7 +106,6 @@
   --font-body: "Manrope", "Helvetica Neue", Arial, sans-serif;
   --font-mono-ui: "JetBrains Mono", ui-monospace, monospace;
   --shadow-glow: 0 0 48px -8px oklch(0.62 0.26 300 / 0.65);
-  --color-font-body: var(--font-body);
 }
 
 @layer base {
