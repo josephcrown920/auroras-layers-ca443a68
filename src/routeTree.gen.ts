@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiDirectorRouteImport } from './routes/api/director'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
+import { Route as ApiProductionRouteImport } from './routes/api/production'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -28,35 +29,49 @@ const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
   path: '/api/generate-image',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiProductionRoute = ApiProductionRouteImport.update({
+  id: '/api/production',
+  path: '/api/production',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/api/director': typeof ApiDirectorRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
+  '/api/production': typeof ApiProductionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/api/director': typeof ApiDirectorRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
+  '/api/production': typeof ApiProductionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/api/director': typeof ApiDirectorRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
+  '/api/production': typeof ApiProductionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/director' | '/api/generate-image'
+  fullPaths: '/' | '/api/director' | '/api/generate-image' | '/api/production'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/director' | '/api/generate-image'
-  id: '__root__' | '/' | '/api/director' | '/api/generate-image'
+  to: '/' | '/api/director' | '/api/generate-image' | '/api/production'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/director'
+    | '/api/generate-image'
+    | '/api/production'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ApiDirectorRoute: typeof ApiDirectorRoute
   ApiGenerateImageRoute: typeof ApiGenerateImageRoute
+  ApiProductionRoute: typeof ApiProductionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +97,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGenerateImageRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/production': {
+      id: '/api/production'
+      path: '/api/production'
+      fullPath: '/api/production'
+      preLoaderRoute: typeof ApiProductionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -89,6 +111,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ApiDirectorRoute: ApiDirectorRoute,
   ApiGenerateImageRoute: ApiGenerateImageRoute,
+  ApiProductionRoute: ApiProductionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
