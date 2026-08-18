@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { sendPromptToStudio } from "@/lib/studioBus";
+import { BRAIN_MODELS, DEFAULT_BRAIN_MODEL } from "@/lib/auroraModels";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -19,6 +20,7 @@ export function DirectorAgent() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [model, setModel] = useState<string>(DEFAULT_BRAIN_MODEL);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   async function send(text: string) {
@@ -33,7 +35,7 @@ export function DirectorAgent() {
       const res = await fetch("/api/director", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: next }),
+        body: JSON.stringify({ messages: next, model }),
       });
       if (!res.ok || !res.body) throw new Error((await res.text()) || "Director unavailable");
 
@@ -81,7 +83,18 @@ export function DirectorAgent() {
         <p className="font-[family-name:var(--font-mono-ui)] text-[0.65rem] tracking-[0.25em] text-muted-foreground uppercase">
           Aurora Director — cinematic brain
         </p>
-        <span className="label-outline">Gemini 3.7</span>
+        <select
+          value={model}
+          onChange={(event) => setModel(event.target.value)}
+          className="rounded-full border border-border bg-secondary px-3 py-2 font-[family-name:var(--font-mono-ui)] text-[0.65rem] text-foreground outline-none focus:border-primary"
+          aria-label="Director brain"
+        >
+          {BRAIN_MODELS.map((brain) => (
+            <option key={brain.id} value={brain.id} disabled={!brain.available}>
+              {brain.label}{brain.available ? "" : " · connector required"}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div

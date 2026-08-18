@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { BRAIN_MODELS, DEFAULT_BRAIN_MODEL } from "@/lib/auroraModels";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -26,18 +27,27 @@ export const Route = createFileRoute("/api/director")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const { messages } = (await request.json()) as { messages: Msg[] };
+        const { messages, model: requestedModel } = (await request.json()) as {
+          messages: Msg[];
+          model?: string;
+        };
         const key = process.env["LOVABLE_API_KEY"];
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
         if (!Array.isArray(messages) || messages.length === 0) {
           return new Response("messages required", { status: 400 });
         }
 
+        const model = BRAIN_MODELS.some(
+          (item) => item.available && item.id === requestedModel,
+        )
+          ? requestedModel
+          : DEFAULT_BRAIN_MODEL;
+
         const upstream = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
           method: "POST",
           headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
           body: JSON.stringify({
-            model: "google/gemini-3.7-flash",
+            model,
             stream: true,
             messages: [{ role: "system", content: SYSTEM }, ...messages.slice(-12)],
           }),
