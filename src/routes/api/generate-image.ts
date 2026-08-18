@@ -3,14 +3,27 @@ import { createFileRoute } from "@tanstack/react-router";
 type Body = {
   prompt: string;
   imageDataUrl?: string;
+  model?: string;
   stream?: boolean;
 };
+
+const ALLOWED_MODELS = [
+  "google/gemini-3-pro-image",
+  "google/gemini-3.1-flash-image",
+  "openai/gpt-image-2",
+] as const;
 
 export const Route = createFileRoute("/api/generate-image")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const { prompt, imageDataUrl, stream = true } = (await request.json()) as Body;
+        const {
+          prompt,
+          imageDataUrl,
+          model: requested,
+          stream = true,
+        } = (await request.json()) as Body;
+
 
         if (!prompt || typeof prompt !== "string" || prompt.trim().length < 2) {
           return new Response(JSON.stringify({ error: "A prompt is required." }), {
