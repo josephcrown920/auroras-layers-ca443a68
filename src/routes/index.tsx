@@ -3,8 +3,8 @@ import { LayerStudio } from "@/components/LayerStudio";
 import { DirectorAgent } from "@/components/DirectorAgent";
 import { AccountControl } from "@/components/AccountControl";
 import heroStreet from "@/assets/hero-street.jpg";
-import layerChains from "@/assets/layer-chains.jpg";
-import layerBraids from "@/assets/layer-braids.jpg";
+import layerChains from "@/assets/layer-chains-locked.jpg";
+import layerBraids from "@/assets/layer-braids-locked.jpg";
 import layerBandana from "@/assets/layer-bandana.jpg";
 
 
