@@ -442,8 +442,13 @@ function Index() {
             </h2>
           </Reveal>
           <div className="mt-10 grid gap-6">
+            <div className="grid gap-6 lg:grid-cols-2">
+              <ProductionAgent />
+              <CharacterBibleEditor />
+            </div>
             <DirectorAgent />
             <LayerStudio />
+
           </div>
         </div>
       </section>
