@@ -4,6 +4,7 @@ import { IMAGE_MODELS, DEFAULT_IMAGE_MODEL } from "@/lib/auroraModels";
 type Body = {
   prompt: string;
   imageDataUrl?: string;
+  characterReferenceDataUrl?: string;
   model?: string;
   stream?: boolean;
 };
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/api/generate-image")({
         const {
           prompt,
           imageDataUrl,
+          characterReferenceDataUrl,
           model: requested,
           stream = true,
         } = (await request.json()) as Body;
@@ -56,14 +58,25 @@ export const Route = createFileRoute("/api/generate-image")({
         if (imageDataUrl?.startsWith("data:image/")) {
           content.push({ type: "image_url", image_url: { url: imageDataUrl } });
         }
+        if (characterReferenceDataUrl?.startsWith("data:image/")) {
+          content.push({ type: "image_url", image_url: { url: characterReferenceDataUrl } });
+        }
 
         const openAiSource = imageDataUrl ? parseImageDataUrl(imageDataUrl) : null;
+        const openAiCharacter = characterReferenceDataUrl
+          ? parseImageDataUrl(characterReferenceDataUrl)
+          : null;
         let upstream: Response;
         if (model.startsWith("openai/") && openAiSource) {
           const form = new FormData();
           form.append("model", model);
           form.append("prompt", lockedPrompt);
           form.append("image", new Blob([openAiSource.bytes], { type: openAiSource.type }), "reference.png");
+          if (openAiCharacter) {
+            form.delete("image");
+            form.append("image[]", new Blob([openAiSource.bytes], { type: openAiSource.type }), "locked-plate.png");
+            form.append("image[]", new Blob([openAiCharacter.bytes], { type: openAiCharacter.type }), "character-reference.png");
+          }
           form.append("quality", "low");
           if (stream) {
             form.append("stream", "true");

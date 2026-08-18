@@ -27,7 +27,7 @@ function extractB64(payload: unknown): string | null {
  */
 export async function streamImage(
   endpoint: string,
-  body: { prompt: string; imageDataUrl?: string; model?: string },
+  body: { prompt: string; imageDataUrl?: string; characterReferenceDataUrl?: string; model?: string },
   onFrame: Frame,
 ): Promise<void> {
 
@@ -50,16 +50,16 @@ export async function streamImage(
       if (!event.data || event.data === "[DONE]") return;
       try {
         const parsed = JSON.parse(event.data) as Record<string, unknown>;
-        if (event.event === "error" || parsed.type === "error") {
+        if (event.event === "error" || parsed["type"] === "error") {
           events++;
-          const detail = parsed.error as { message?: string } | undefined;
+          const detail = parsed["error"] as { message?: string } | undefined;
           streamError = detail?.message ?? "Image generation failed";
           return;
         }
         const b64 = extractB64(parsed);
         if (!b64) return;
         events++;
-        const type = String(parsed.type ?? event.event ?? "");
+        const type = String(parsed["type"] ?? event.event ?? "");
         const final = type.includes("completed");
         flushSync(() => onFrame(toDataUrl(b64), final));
         if (final) completed = true;

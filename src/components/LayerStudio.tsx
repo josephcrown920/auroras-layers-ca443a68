@@ -3,7 +3,6 @@ import { streamImage } from "@/lib/streamImage";
 import { onStudioPrompt } from "@/lib/studioBus";
 import { saveCloudProject } from "@/lib/cloudProjects";
 import {
-  BRAIN_MODELS,
   DEFAULT_BRAIN_MODEL,
   DEFAULT_IMAGE_MODEL,
   DEFAULT_VIDEO_MODEL,
@@ -77,6 +76,7 @@ export function LayerStudio() {
           prompt: lockIdentity && base ? `${prompt.trim()}. ${IDENTITY_LOCK}` : prompt.trim(),
           model,
           ...(base ? { imageDataUrl: base } : {}),
+          ...(characterReference ? { characterReferenceDataUrl: characterReference } : {}),
         },
         (dataUrl, final) => {
           setLayers((prev) => {
