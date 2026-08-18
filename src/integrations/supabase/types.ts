@@ -14,7 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      aurora_projects: {
+        Row: {
+          brain_model: string
+          character_reference_path: string | null
+          created_at: string
+          id: string
+          identity_lock: boolean
+          image_model: string
+          layers: Json
+          name: string
+          preview_path: string | null
+          prompt: string
+          source_path: string | null
+          updated_at: string
+          user_id: string
+          video_model: string
+        }
+        Insert: {
+          brain_model?: string
+          character_reference_path?: string | null
+          created_at?: string
+          id?: string
+          identity_lock?: boolean
+          image_model?: string
+          layers?: Json
+          name?: string
+          preview_path?: string | null
+          prompt?: string
+          source_path?: string | null
+          updated_at?: string
+          user_id: string
+          video_model?: string
+        }
+        Update: {
+          brain_model?: string
+          character_reference_path?: string | null
+          created_at?: string
+          id?: string
+          identity_lock?: boolean
+          image_model?: string
+          layers?: Json
+          name?: string
+          preview_path?: string | null
+          prompt?: string
+          source_path?: string | null
+          updated_at?: string
+          user_id?: string
+          video_model?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
