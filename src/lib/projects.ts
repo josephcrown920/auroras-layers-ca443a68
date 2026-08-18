@@ -1,3 +1,5 @@
+import { buildSequencePrompt, sequence, shotCode, type Shot } from "@/lib/storyboard";
+
 export type LayerProject = {
   id: string;
   name: string;
@@ -5,7 +7,10 @@ export type LayerProject = {
   model: string;
   createdAt: number;
   sourceUrl?: string;
-  layers: { id: string; prompt: string; dataUrl: string }[];
+  characterId?: string;
+  characterName?: string;
+  characterVersion?: number;
+  layers: Shot[];
 };
 
 const KEY = "aurora.projects.v1";
@@ -14,7 +19,9 @@ function safeParse(raw: string | null): LayerProject[] {
   if (!raw) return [];
   try {
     const v = JSON.parse(raw);
-    return Array.isArray(v) ? (v as LayerProject[]) : [];
+    if (!Array.isArray(v)) return [];
+    // migrate legacy projects whose layers had no explicit order
+    return (v as LayerProject[]).map((p) => ({ ...p, layers: sequence(p.layers ?? []) }));
   } catch {
     return [];
   }
@@ -60,27 +67,38 @@ export async function exportProjectZip(project: LayerProject) {
   const { default: JSZip } = await import("jszip");
   const zip = new JSZip();
   const slug = project.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 40) || "project";
+  const shots = sequence(project.layers);
 
   if (project.sourceUrl) {
     zip.file(`${slug}/00-source.png`, dataUrlToBase64(project.sourceUrl), { base64: true });
   }
-  project.layers.forEach((layer, i) => {
-    zip.file(`${slug}/${String(i + 1).padStart(2, "0")}-layer.png`, dataUrlToBase64(layer.dataUrl), {
-      base64: true,
-    });
+  shots.forEach((shot) => {
+    zip.file(`${slug}/${shotCode(shot.order)}.png`, dataUrlToBase64(shot.dataUrl), { base64: true });
   });
-  const last = project.layers[project.layers.length - 1];
+  const last = shots[shots.length - 1];
   if (last) {
     zip.file(`${slug}/final-composite.png`, dataUrlToBase64(last.dataUrl), { base64: true });
   }
   zip.file(
+    `${slug}/storyboard.txt`,
+    buildSequencePrompt(
+      shots,
+      project.characterName
+        ? `CHARACTER: ${project.characterName} · bible v${project.characterVersion ?? 1}`
+        : "",
+    ),
+  );
+  zip.file(
     `${slug}/recipe.txt`,
     [
       `Aurora Performance Studio — ${project.name}`,
-      `Model: ${project.model}`,
+      `Image engine: ${project.model}`,
+      project.characterName
+        ? `Character bible: ${project.characterName} v${project.characterVersion ?? 1}`
+        : "Character bible: none",
       `Created: ${new Date(project.createdAt).toISOString()}`,
       "",
-      ...project.layers.map((l, i) => `${i + 1}. ${l.prompt}`),
+      ...shots.map((s) => `${shotCode(s.order)} ${s.beat ? `[${s.beat}] ` : ""}${s.prompt}`),
     ].join("\n"),
   );
 

@@ -14,10 +14,92 @@ export type Database = {
   }
   public: {
     Tables: {
+      aurora_character_versions: {
+        Row: {
+          change_note: string | null
+          character_id: string
+          created_at: string
+          id: string
+          reference_paths: Json
+          traits: Json
+          user_id: string
+          version: number
+        }
+        Insert: {
+          change_note?: string | null
+          character_id: string
+          created_at?: string
+          id?: string
+          reference_paths?: Json
+          traits?: Json
+          user_id: string
+          version: number
+        }
+        Update: {
+          change_note?: string | null
+          character_id?: string
+          created_at?: string
+          id?: string
+          reference_paths?: Json
+          traits?: Json
+          user_id?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "aurora_character_versions_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "aurora_characters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      aurora_characters: {
+        Row: {
+          alias: string | null
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          reference_paths: Json
+          traits: Json
+          updated_at: string
+          user_id: string
+          version: number
+        }
+        Insert: {
+          alias?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          reference_paths?: Json
+          traits?: Json
+          updated_at?: string
+          user_id: string
+          version?: number
+        }
+        Update: {
+          alias?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          reference_paths?: Json
+          traits?: Json
+          updated_at?: string
+          user_id?: string
+          version?: number
+        }
+        Relationships: []
+      }
       aurora_projects: {
         Row: {
           brain_model: string
+          character_id: string | null
           character_reference_path: string | null
+          character_version: number | null
           created_at: string
           id: string
           identity_lock: boolean
@@ -27,13 +109,16 @@ export type Database = {
           preview_path: string | null
           prompt: string
           source_path: string | null
+          storyboard: Json
           updated_at: string
           user_id: string
           video_model: string
         }
         Insert: {
           brain_model?: string
+          character_id?: string | null
           character_reference_path?: string | null
+          character_version?: number | null
           created_at?: string
           id?: string
           identity_lock?: boolean
@@ -43,13 +128,16 @@ export type Database = {
           preview_path?: string | null
           prompt?: string
           source_path?: string | null
+          storyboard?: Json
           updated_at?: string
           user_id: string
           video_model?: string
         }
         Update: {
           brain_model?: string
+          character_id?: string | null
           character_reference_path?: string | null
+          character_version?: number | null
           created_at?: string
           id?: string
           identity_lock?: boolean
@@ -59,11 +147,20 @@ export type Database = {
           preview_path?: string | null
           prompt?: string
           source_path?: string | null
+          storyboard?: Json
           updated_at?: string
           user_id?: string
           video_model?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "aurora_projects_character_id_fkey"
+            columns: ["character_id"]
+            isOneToOne: false
+            referencedRelation: "aurora_characters"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
