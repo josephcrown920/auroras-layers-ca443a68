@@ -44,3 +44,25 @@ inside the API route. Nothing else to set up.
 
 Errors from the AI gateway (rate limits, credit exhaustion) surface directly under the
 Run button so you always know why a render didn't land.
+
+## New in this build
+
+- **Aurora Director (AI agent)** — a cinematic brain (Gemini 3.7 Flash, streaming) that returns
+  LOGLINE / SHOT / LIGHT / WARDROBE / PALETTE / PROMPT / NEXT for any idea. One click sends the
+  generated PROMPT straight into the studio.
+- **Engine picker** — Banana Pro (`google/gemini-3-pro-image`), Banana Flash
+  (`google/gemini-3.1-flash-image`), GPT Image 2 (`openai/gpt-image-2`).
+- **Identity lock** — every edit re-feeds the previous render as the source and appends a
+  "same face, skin tone, pose, framing, no mirroring" instruction so characters stay consistent.
+- **Layer stack** — each generation is a layer; click a thumbnail to revisit any state.
+- **Projects** — name, save, reopen and delete shoots (stored in your browser).
+- **Export** — download the active frame as PNG, all layers as PNGs, or the whole project as a ZIP
+  (source + numbered layers + final composite + `recipe.txt`).
+
+### How to use
+
+1. Scroll to **Direct your shoot**.
+2. Pitch a scene to the Director → press **Send prompt to studio**.
+3. Upload a reference image (optional), pick an engine, keep **Lock identity** on.
+4. **Run layer edit**, then **Stack another layer** for each change.
+5. **Save project** and **Export ZIP**.
