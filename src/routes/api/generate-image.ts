@@ -40,10 +40,30 @@ export const Route = createFileRoute("/api/generate-image")({
           });
         }
 
+        const model =
+          requested && (ALLOWED_MODELS as readonly string[]).includes(requested)
+            ? requested
+            : "google/gemini-3-pro-image";
+
         const content: Array<Record<string, unknown>> = [{ type: "text", text: prompt }];
         if (imageDataUrl?.startsWith("data:image/")) {
           content.push({ type: "image_url", image_url: { url: imageDataUrl } });
         }
+
+        // OpenAI image models take `prompt`; Gemini image models take `messages` + `modalities`.
+        const body = model.startsWith("openai/")
+          ? {
+              model,
+              prompt,
+              quality: "low",
+              ...(stream ? { stream: true, partial_images: 1 } : {}),
+            }
+          : {
+              model,
+              messages: [{ role: "user", content }],
+              modalities: ["image", "text"],
+              ...(stream ? { stream: true } : {}),
+            };
 
         const upstream = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
           method: "POST",
@@ -51,13 +71,9 @@ export const Route = createFileRoute("/api/generate-image")({
             Authorization: `Bearer ${key}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            model: "google/gemini-3-pro-image",
-            messages: [{ role: "user", content }],
-            modalities: ["image", "text"],
-            ...(stream ? { stream: true } : {}),
-          }),
+          body: JSON.stringify(body),
         });
+
 
         if (!upstream.ok || !upstream.body) {
           const text = await upstream.text().catch(() => "");
