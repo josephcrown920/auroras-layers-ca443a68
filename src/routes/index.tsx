@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LayerStudio } from "@/components/LayerStudio";
+import { DirectorAgent } from "@/components/DirectorAgent";
 import heroStreet from "@/assets/hero-street.jpg";
 import layerChains from "@/assets/layer-chains.jpg";
 import layerBraids from "@/assets/layer-braids.jpg";
 import layerBandana from "@/assets/layer-bandana.jpg";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
