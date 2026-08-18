@@ -24,9 +24,10 @@ function extractB64(payload: unknown): string | null {
  */
 export async function streamImage(
   endpoint: string,
-  body: { prompt: string; imageDataUrl?: string },
+  body: { prompt: string; imageDataUrl?: string; model?: string },
   onFrame: Frame,
 ): Promise<void> {
+
   const res = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
