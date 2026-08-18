@@ -102,11 +102,12 @@
 }
 
 @theme inline {
-  --font-display: "Instrument Serif", Georgia, serif;
-  --font-body: "Manrope", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Archivo", "Helvetica Neue", Arial, sans-serif;
   --font-mono-ui: "JetBrains Mono", ui-monospace, monospace;
   --shadow-glow: 0 0 48px -8px oklch(0.62 0.26 300 / 0.65);
 }
+
 
 @layer base {
   * {
@@ -158,11 +159,12 @@
 
 @utility headline {
   font-family: var(--font-display);
-  font-weight: 400;
-  font-style: italic;
-  letter-spacing: -0.02em;
-  line-height: 0.95;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+  line-height: 0.9;
 }
+
 
 @utility gradient-text {
   background-image: var(--gradient-aurora);

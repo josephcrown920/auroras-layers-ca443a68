@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiDirectorRouteImport } from './routes/api/director'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDirectorRoute = ApiDirectorRouteImport.update({
+  id: '/api/director',
+  path: '/api/director',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
@@ -25,27 +31,31 @@ const ApiGenerateImageRoute = ApiGenerateImageRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/director': typeof ApiDirectorRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/director': typeof ApiDirectorRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/director': typeof ApiDirectorRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/generate-image'
+  fullPaths: '/' | '/api/director' | '/api/generate-image'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/generate-image'
-  id: '__root__' | '/' | '/api/generate-image'
+  to: '/' | '/api/director' | '/api/generate-image'
+  id: '__root__' | '/' | '/api/director' | '/api/generate-image'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiDirectorRoute: typeof ApiDirectorRoute
   ApiGenerateImageRoute: typeof ApiGenerateImageRoute
 }
 
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/director': {
+      id: '/api/director'
+      path: '/api/director'
+      fullPath: '/api/director'
+      preLoaderRoute: typeof ApiDirectorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/generate-image': {
@@ -70,6 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiDirectorRoute: ApiDirectorRoute,
   ApiGenerateImageRoute: ApiGenerateImageRoute,
 }
 export const routeTree = rootRouteImport
