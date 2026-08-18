@@ -1,6 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LayerStudio } from "@/components/LayerStudio";
 import { DirectorAgent } from "@/components/DirectorAgent";
+import { ProductionAgent } from "@/components/ProductionAgent";
+import { CharacterBibleEditor } from "@/components/CharacterBibleEditor";
+
 import { AccountControl } from "@/components/AccountControl";
 import { Reveal } from "@/components/visual/Reveal";
 import { BeforeAfter } from "@/components/visual/BeforeAfter";
