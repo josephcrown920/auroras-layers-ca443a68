@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LayerStudio } from "@/components/LayerStudio";
 import { DirectorAgent } from "@/components/DirectorAgent";
+import { AccountControl } from "@/components/AccountControl";
 import heroStreet from "@/assets/hero-street.jpg";
 import layerChains from "@/assets/layer-chains.jpg";
 import layerBraids from "@/assets/layer-braids.jpg";
@@ -63,12 +64,15 @@ function Index() {
         <div className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-between px-5 py-8">
           <header className="flex items-center justify-between">
             <span className="headline text-2xl">Aurora</span>
-            <a
-              href="#studio"
-              className="btn-aurora rounded-full px-5 py-2.5 text-sm font-bold tracking-wide"
-            >
-              + Open Studio
-            </a>
+            <div className="flex items-center gap-2">
+              <AccountControl />
+              <a
+                href="#studio"
+                className="btn-aurora rounded-full px-5 py-2.5 text-sm font-bold tracking-wide"
+              >
+                + Open Studio
+              </a>
+            </div>
           </header>
 
           <div className="py-16">
