@@ -134,13 +134,15 @@ function Index() {
             Direct your <span className="gradient-text">shoot.</span>
           </h2>
           <p className="mt-4 max-w-2xl text-muted-foreground">
-            Drop a reference → write direction → generate. That's it.
+            Brief the director → drop a reference → generate, stack layers, export.
           </p>
-          <div className="mt-10">
+          <div className="mt-10 grid gap-6">
+            <DirectorAgent />
             <LayerStudio />
           </div>
         </div>
       </section>
+
 
       {/* DECOMPOSE */}
       <section id="decompose" className="dotfield mx-auto max-w-6xl px-5 py-24">
