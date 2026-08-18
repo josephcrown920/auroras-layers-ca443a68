@@ -9,7 +9,7 @@ const PRESETS = [
 ];
 
 export function LayerStudio() {
-  const [prompt, setPrompt] = useState(PRESETS[0]);
+  const [prompt, setPrompt] = useState<string>(PRESETS[0] ?? "");
   const [sourceUrl, setSourceUrl] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [isFinal, setIsFinal] = useState(false);
