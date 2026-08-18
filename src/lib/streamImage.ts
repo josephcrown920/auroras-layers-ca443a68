@@ -1,3 +1,6 @@
+import { createParser } from "eventsource-parser";
+import { flushSync } from "react-dom";
+
 type Frame = (dataUrl: string, isFinal: boolean) => void;
 
 function toDataUrl(b64: string) {
@@ -24,7 +27,7 @@ function extractB64(payload: unknown): string | null {
  */
 export async function streamImage(
   endpoint: string,
-  body: { prompt: string; imageDataUrl?: string; model?: string },
+  body: { prompt: string; imageDataUrl?: string; characterReferenceDataUrl?: string; model?: string },
   onFrame: Frame,
 ): Promise<void> {
 
@@ -39,39 +42,46 @@ export async function streamImage(
     throw new Error(text || `Image request failed (${res.status})`);
   }
 
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = "";
   let events = 0;
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-
-    const chunks = buffer.split("\n\n");
-    buffer = chunks.pop() ?? "";
-
-    for (const chunk of chunks) {
-      for (const line of chunk.split("\n")) {
-        if (!line.startsWith("data:")) continue;
-        const data = line.slice(5).trim();
-        if (!data || data === "[DONE]") continue;
-        try {
-          const parsed = JSON.parse(data);
-          const b64 = extractB64(parsed);
-          if (!b64) continue;
+  let completed = false;
+  let streamError: string | null = null;
+  const parser = createParser({
+    onEvent(event) {
+      if (!event.data || event.data === "[DONE]") return;
+      try {
+        const parsed = JSON.parse(event.data) as Record<string, unknown>;
+        if (event.event === "error" || parsed["type"] === "error") {
           events++;
-          const type: string = parsed.type ?? "";
-          onFrame(toDataUrl(b64), type.includes("completed") || !type.includes("partial"));
-        } catch {
-          /* ignore keepalive / non-JSON lines */
+          const detail = parsed["error"] as { message?: string } | undefined;
+          streamError = detail?.message ?? "Image generation failed";
+          return;
         }
+        const b64 = extractB64(parsed);
+        if (!b64) return;
+        events++;
+        const type = String(parsed["type"] ?? event.event ?? "");
+        const final = type.includes("completed");
+        flushSync(() => onFrame(toDataUrl(b64), final));
+        if (final) completed = true;
+      } catch {
+        // Ignore provider keepalives and non-JSON frames.
       }
+    },
+  });
+  const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      parser.feed(value);
     }
+  } finally {
+    void reader.cancel().catch(() => undefined);
   }
 
-  if (events > 0) return;
+  if (streamError) throw new Error(streamError);
+  if (events > 0 && completed) return;
+  if (events > 0) throw new Error("Image stream ended before the final frame arrived");
 
   // Zero-event stream: replay once without streaming.
   const fallback = await fetch(endpoint, {

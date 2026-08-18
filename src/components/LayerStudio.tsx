@@ -1,6 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { streamImage } from "@/lib/streamImage";
 import { onStudioPrompt } from "@/lib/studioBus";
+import { saveCloudProject } from "@/lib/cloudProjects";
+import {
+  DEFAULT_BRAIN_MODEL,
+  DEFAULT_IMAGE_MODEL,
+  DEFAULT_VIDEO_MODEL,
+  IMAGE_MODELS,
+  VIDEO_MODELS,
+} from "@/lib/auroraModels";
 import {
   deleteProject,
   downloadDataUrl,
@@ -17,22 +25,19 @@ const PRESETS = [
   "Relight the scene as a night block party with neon signage",
 ];
 
-const MODELS = [
-  { id: "google/gemini-3-pro-image", label: "Banana Pro", note: "Best likeness" },
-  { id: "google/gemini-3.1-flash-image", label: "Banana Flash", note: "Fastest" },
-  { id: "openai/gpt-image-2", label: "GPT Image 2", note: "Graphic / text" },
-];
-
 const IDENTITY_LOCK =
-  "Keep the same person: identical face, skin tone, hair, body, pose, camera angle and framing. Do not mirror or flip the image. Change only what is described.";
+  "LOCKED PLATE: preserve identical face, ethnicity, skin tone, hair, body, expression, pose, hand placement, camera angle, crop and background. Keep every subject on the same side of frame. Do not mirror, flip, swap, recast or reposition anyone. Change only the named region.";
 
 type Layer = { id: string; prompt: string; dataUrl: string };
 
 export function LayerStudio() {
   const [prompt, setPrompt] = useState<string>(PRESETS[0] ?? "");
-  const [model, setModel] = useState<string>(MODELS[0]!.id);
+  const [model, setModel] = useState<string>(DEFAULT_IMAGE_MODEL);
+  const [videoModel, setVideoModel] = useState<string>(DEFAULT_VIDEO_MODEL);
+  const [brainModel] = useState<string>(DEFAULT_BRAIN_MODEL);
   const [lockIdentity, setLockIdentity] = useState(true);
   const [sourceUrl, setSourceUrl] = useState<string | null>(null);
+  const [characterReference, setCharacterReference] = useState<string | null>(null);
   const [layers, setLayers] = useState<Layer[]>([]);
   const [active, setActive] = useState<string | null>(null);
   const [isFinal, setIsFinal] = useState(false);
@@ -42,16 +47,17 @@ export function LayerStudio() {
   const [projectId, setProjectId] = useState<string>(() => crypto.randomUUID());
   const [name, setName] = useState("Untitled shoot");
   const fileRef = useRef<HTMLInputElement>(null);
+  const characterRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => setProjects(loadProjects()), []);
   useEffect(() => onStudioPrompt((p) => setPrompt(p)), []);
 
   const result = layers.find((l) => l.id === active)?.dataUrl ?? null;
 
-  function onFile(file: File | undefined) {
+  function readFile(file: File | undefined, setter: (value: string) => void) {
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => setSourceUrl(String(reader.result));
+    reader.onload = () => setter(String(reader.result));
     reader.readAsDataURL(file);
   }
 
@@ -70,6 +76,7 @@ export function LayerStudio() {
           prompt: lockIdentity && base ? `${prompt.trim()}. ${IDENTITY_LOCK}` : prompt.trim(),
           model,
           ...(base ? { imageDataUrl: base } : {}),
+          ...(characterReference ? { characterReferenceDataUrl: characterReference } : {}),
         },
         (dataUrl, final) => {
           setLayers((prev) => {
@@ -99,9 +106,21 @@ export function LayerStudio() {
     };
   }
 
-  function onSave() {
+  async function onSave() {
     if (layers.length === 0) return;
-    setProjects(saveProject(currentProject()));
+    const project = currentProject();
+    setProjects(saveProject(project));
+    try {
+      const synced = await saveCloudProject(project, {
+        brainModel,
+        videoModel,
+        identityLock: lockIdentity,
+        ...(characterReference ? { characterReference } : {}),
+      });
+      if (synced) setError(null);
+    } catch (cloudError) {
+      setError(cloudError instanceof Error ? cloudError.message : "Cloud sync failed");
+    }
   }
 
   function openProject(p: LayerProject) {
@@ -121,6 +140,7 @@ export function LayerStudio() {
     setLayers([]);
     setActive(null);
     setSourceUrl(null);
+    setCharacterReference(null);
   }
 
   return (
@@ -162,29 +182,64 @@ export function LayerStudio() {
           type="file"
           accept="image/*"
           className="hidden"
-          onChange={(e) => onFile(e.target.files?.[0])}
+          onChange={(e) => readFile(e.target.files?.[0], setSourceUrl)}
+        />
+
+        <button
+          type="button"
+          onClick={() => characterRef.current?.click()}
+          className="mt-3 flex w-full items-center justify-between rounded-lg border border-border bg-secondary/40 px-3 py-2 text-xs text-muted-foreground hover:border-primary hover:text-primary"
+        >
+          <span>Character sheet / face reference</span>
+          <span>{characterReference ? "Locked" : "Add"}</span>
+        </button>
+        <input
+          ref={characterRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => readFile(e.target.files?.[0], setCharacterReference)}
         />
 
         <p className="mt-6 font-[family-name:var(--font-mono-ui)] text-[0.65rem] tracking-[0.25em] text-muted-foreground uppercase">
           Step 02 — Engine
         </p>
-        <div className="mt-3 grid grid-cols-3 gap-1 rounded-full bg-secondary p-1 text-center text-xs">
-          {MODELS.map((m) => (
+        <div className="mt-3 grid grid-cols-2 gap-1 rounded-lg bg-secondary p-1 text-center text-xs sm:grid-cols-3">
+          {IMAGE_MODELS.map((m) => (
             <button
               key={m.id}
               type="button"
               onClick={() => setModel(m.id)}
-              title={m.note}
+              disabled={!m.available}
+              title={m.available ? m.note : `${m.note}. This engine is not available through Lovable AI yet.`}
               className={
                 model === m.id
-                  ? "btn-aurora rounded-full py-2 font-bold"
-                  : "rounded-full py-2 text-muted-foreground transition-colors hover:text-foreground"
+                  ? "btn-aurora rounded-md py-2 font-bold"
+                  : "rounded-md py-2 text-muted-foreground transition-colors hover:text-foreground disabled:cursor-not-allowed disabled:opacity-35"
               }
             >
               {m.label}
             </button>
           ))}
         </div>
+
+        <p className="mt-5 font-[family-name:var(--font-mono-ui)] text-[0.65rem] tracking-[0.25em] text-muted-foreground uppercase">
+          Motion engine
+        </p>
+        <select
+          value={videoModel}
+          onChange={(event) => setVideoModel(event.target.value)}
+          className="mt-3 w-full rounded-lg border border-border bg-secondary px-3 py-3 text-xs outline-none focus:border-primary"
+        >
+          {VIDEO_MODELS.map((engine) => (
+            <option key={engine.id} value={engine.id} disabled={!engine.available}>
+              {engine.label}{engine.available ? "" : " · connector required"}
+            </option>
+          ))}
+        </select>
+        <p className="mt-2 text-[0.65rem] text-muted-foreground">
+          Veo is ready for the video agent. Seedance, Kling and Wan remain visible but disabled until their providers are available.
+        </p>
 
         <label className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
           <input
@@ -311,10 +366,10 @@ export function LayerStudio() {
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
-                onClick={onSave}
+                onClick={() => void onSave()}
                 className="rounded-full border border-primary px-4 py-2 text-[0.7rem] font-bold tracking-wider text-primary uppercase transition-colors hover:bg-primary hover:text-primary-foreground"
               >
-                Save project
+                Save + sync
               </button>
               <button
                 type="button"
