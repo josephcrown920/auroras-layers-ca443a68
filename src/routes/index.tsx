@@ -2,11 +2,18 @@ import { createFileRoute } from "@tanstack/react-router";
 import { LayerStudio } from "@/components/LayerStudio";
 import { DirectorAgent } from "@/components/DirectorAgent";
 import { AccountControl } from "@/components/AccountControl";
+import { Reveal } from "@/components/visual/Reveal";
+import { BeforeAfter } from "@/components/visual/BeforeAfter";
+import { FeatureShowcase } from "@/components/visual/FeatureShowcase";
+import { LayerPeel } from "@/components/visual/LayerPeel";
+import { PromptTicker } from "@/components/visual/PromptTicker";
 import heroStreet from "@/assets/hero-street.jpg";
 import layerChains from "@/assets/layer-chains-locked.jpg";
 import layerBraids from "@/assets/layer-braids-locked.jpg";
 import layerBandana from "@/assets/layer-bandana.jpg";
-
+import demoMotion from "@/assets/demo-motion.jpg";
+import demoCharsheet from "@/assets/demo-charsheet.jpg";
+import demoLayerstack from "@/assets/demo-layerstack.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -30,20 +37,29 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const steps = [
-  { n: "01", strong: "Drop any flat image in", rest: "— even one you didn't make." },
-  { n: "02", strong: "Open Layer Decomposition.", rest: "Pick 2K, Fast." },
-  { n: "03", strong: "Separate.", rest: "Background + up to 20 layers back." },
+const peelLayers = [
+  { label: "Plate", src: heroStreet },
+  { label: "Wardrobe", src: layerBandana },
+  { label: "Jewelry", src: layerChains },
+  { label: "Talent", src: layerBraids },
 ];
 
-const panelItems = [
-  ["Layer Decomposition", "New"],
-  ["Edit text", "New"],
-  ["Upscale", ""],
-  ["Remove background", ""],
-  ["Enhancer", ""],
-  ["Relight", ""],
-  ["Angles", ""],
+const engines = [
+  { name: "Nano Banana Pro", kind: "Image", frame: layerChains },
+  { name: "Seedream 5.0", kind: "Image", frame: layerBraids },
+  { name: "GPT Image 2", kind: "Image", frame: heroStreet },
+  { name: "Grok Imagine", kind: "Image", frame: layerBandana },
+  { name: "Veo 3.1", kind: "Video", frame: demoMotion },
+  { name: "Seedance 2.5", kind: "Video", frame: demoMotion },
+  { name: "Kling Omni", kind: "Video", frame: demoMotion },
+  { name: "Wan 2.2", kind: "Video", frame: demoMotion },
+];
+
+const brains = [
+  { name: "Aurora Director", note: "Gemini 3.7 — shot lists, coverage, lighting" },
+  { name: "Synthetic Council", note: "GPT-5.5 — cross-checks continuity before render" },
+  { name: "DeepSeek R", note: "Long-form reasoning for multi-scene arcs" },
+  { name: "Claude", note: "Story structure, tone, dialogue beats" },
 ];
 
 function Index() {
@@ -62,9 +78,9 @@ function Index() {
         </div>
 
         <div className="relative mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-between px-5 py-8">
-          <header className="flex items-center justify-between">
-            <span className="headline text-2xl">Aurora</span>
-            <div className="flex items-center gap-2">
+          <header className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4">
+            <span className="headline truncate text-2xl">Aurora</span>
+            <div className="flex shrink-0 items-center gap-2">
               <AccountControl />
               <a
                 href="#studio"
@@ -75,43 +91,62 @@ function Index() {
             </div>
           </header>
 
-          <div className="py-16">
-            <p className="font-[family-name:var(--font-mono-ui)] text-[0.68rem] tracking-[0.3em] text-accent uppercase">
-              ● By artists, for artists
-            </p>
-            <h1 className="headline text-shadow-hard mt-5 text-[clamp(2.9rem,10vw,7rem)]">
-              Generate once.
-              <span className="gradient-text block">Edit forever.</span>
-            </h1>
-            <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-              Aurora Performance Studio reads your frame, splits it into layers, and re-renders
-              only the one you name. Style, motion, likeness — intact.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="#studio"
-                className="btn-aurora rounded-full px-8 py-3.5 text-sm font-bold tracking-wide uppercase transition-transform hover:scale-[1.03]"
-              >
-                + Open Studio
-              </a>
-              <a
-                href="#edit"
-                className="rounded-full border border-border px-8 py-3.5 text-sm font-bold tracking-wide uppercase transition-colors hover:border-primary hover:text-primary"
-              >
-                See it work
-              </a>
+          <div className="grid gap-10 py-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+            <div>
+              <p className="font-[family-name:var(--font-mono-ui)] text-[0.68rem] tracking-[0.3em] text-accent uppercase">
+                ● By artists, for artists
+              </p>
+              <h1 className="headline text-shadow-hard mt-5 text-[clamp(2.9rem,9vw,6.2rem)]">
+                Generate once.
+                <span className="gradient-text block">Edit forever.</span>
+              </h1>
+              <p className="mt-6 max-w-xl text-lg text-muted-foreground">
+                Aurora reads your frame, splits it into layers, and re-renders only the one you
+                name. Style, motion, likeness — intact.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <a
+                  href="#studio"
+                  className="btn-aurora rounded-full px-8 py-3.5 text-sm font-bold tracking-wide uppercase transition-transform hover:scale-[1.03]"
+                >
+                  + Open Studio
+                </a>
+                <a
+                  href="#edit"
+                  className="rounded-full border border-border px-8 py-3.5 text-sm font-bold tracking-wide uppercase transition-colors hover:border-primary hover:text-primary"
+                >
+                  See it work
+                </a>
+              </div>
             </div>
-            <p className="mt-4 font-[family-name:var(--font-mono-ui)] text-[0.62rem] tracking-[0.3em] text-muted-foreground uppercase">
-              Free to start · no card needed
-            </p>
+
+            {/* live proof, not copy */}
+            <Reveal className="relative">
+              <BeforeAfter
+                before={heroStreet}
+                after={layerChains}
+                beforeLabel="Upload"
+                afterLabel="One sentence later"
+                alt="Same frame, subject iced out"
+                className="aspect-4/5 shadow-[var(--shadow-glow)]"
+              />
+              <PromptTicker
+                className="mt-3"
+                prompts={[
+                  "ice him out — cuban links, diamond grillz",
+                  "neon braids, oversized varsity jacket",
+                  "red bandana, backwards fitted cap",
+                ]}
+              />
+            </Reveal>
           </div>
 
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
-            {[heroStreet, layerBraids, layerChains, layerBandana, heroStreet].map((src, i) => (
+            {[heroStreet, layerBraids, layerChains, layerBandana, demoMotion].map((src, i) => (
               <figure
                 key={i}
-                className="glow-frame relative aspect-3/4 bg-card"
-                style={{ opacity: i === 2 ? 1 : 0.7 }}
+                className="glow-frame relative aspect-3/4 bg-card transition-transform duration-500 hover:-translate-y-1"
+                style={{ opacity: i === 2 ? 1 : 0.72 }}
               >
                 <img
                   src={src}
@@ -128,213 +163,289 @@ function Index() {
         </div>
       </section>
 
-      {/* STUDIO */}
-      <section id="studio" className="border-y border-border bg-card/40">
+      {/* DECOMPOSE — interactive peel */}
+      <section id="decompose" className="dotfield border-y border-border">
         <div className="mx-auto max-w-6xl px-5 py-24">
+          <Reveal>
+            <p className="font-[family-name:var(--font-mono-ui)] text-xs tracking-[0.3em] text-accent uppercase">
+              Step one — Decompose
+            </p>
+            <h2 className="headline mt-4 text-[clamp(2.3rem,7vw,4.5rem)]">
+              One upload.
+              <span className="gradient-text block">20+ elements.</span>
+            </h2>
+          </Reveal>
+
+          <div className="mt-14 grid gap-12 lg:grid-cols-[1fr_0.85fr] lg:items-center">
+            <Reveal>
+              <LayerPeel layers={peelLayers} />
+            </Reveal>
+            <Reveal delay={120} className="glow-frame overflow-hidden bg-card">
+              <img
+                src={demoLayerstack}
+                alt="A single frame exploded into stacked translucent layer planes"
+                loading="lazy"
+                width={1280}
+                height={960}
+                className="w-full object-cover"
+              />
+              <p className="p-5 text-sm text-muted-foreground">
+                Background, talent, wardrobe, jewelry, props — each one addressable on its own.
+              </p>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* LAYER EDIT — dual sliders */}
+      <section id="edit" className="bg-card/40">
+        <div className="mx-auto max-w-6xl px-5 py-24">
+          <Reveal>
+            <p className="font-[family-name:var(--font-mono-ui)] text-xs tracking-[0.3em] text-accent uppercase">
+              The layer edit
+            </p>
+            <h2 className="headline mt-4 text-[clamp(2.3rem,7vw,4.5rem)]">
+              Change one thing.
+              <span className="gradient-text block">Nothing else moves.</span>
+            </h2>
+          </Reveal>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            <Reveal>
+              <BeforeAfter
+                before={heroStreet}
+                after={layerChains}
+                beforeLabel="Plate"
+                afterLabel="Iced out"
+                alt="Subject iced out with cuban links"
+                className="aspect-4/5"
+              />
+              <PromptTicker className="mt-3" prompts={["iced-out cuban links and diamond grillz"]} />
+            </Reveal>
+            <Reveal delay={120}>
+              <BeforeAfter
+                before={heroStreet}
+                after={layerBraids}
+                beforeLabel="Plate"
+                afterLabel="Swapped"
+                alt="Subject with neon braids and varsity jacket"
+                className="aspect-4/5"
+              />
+              <PromptTicker className="mt-3" prompts={["neon-green braids, oversized varsity jacket"]} />
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* CAPABILITY WALL — every card leads with a demo */}
+      <section className="mx-auto max-w-6xl px-5 py-24">
+        <Reveal>
           <p className="font-[family-name:var(--font-mono-ui)] text-xs tracking-[0.3em] text-accent uppercase">
-            Live — the studio
+            The rig
           </p>
           <h2 className="headline mt-4 text-[clamp(2.3rem,7vw,4.5rem)]">
-            Direct your <span className="gradient-text">shoot.</span>
+            Show, <span className="gradient-text">don't tell.</span>
           </h2>
-          <p className="mt-4 max-w-2xl text-muted-foreground">
-            Brief the director → drop a reference → generate, stack layers, export.
-          </p>
+        </Reveal>
+
+        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <FeatureShowcase
+            chip="Identity lock"
+            title="Same face. Every take."
+            line="Upload a character sheet once — skin tone, bone structure and framing hold across every render."
+            media={
+              <img
+                src={demoCharsheet}
+                alt="Four-angle character reference sheet of the same artist"
+                loading="lazy"
+                width={1280}
+                height={960}
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+            }
+          />
+          <FeatureShowcase
+            chip="Motion"
+            title="Frame to 8s clip."
+            line="Hand a finished layer to a video engine and it moves — same wardrobe, same light."
+            delay={100}
+            media={
+              <>
+                <img
+                  src={demoMotion}
+                  alt="Cinematic motion frame with neon light trails"
+                  loading="lazy"
+                  width={1280}
+                  height={720}
+                  className="h-full w-full object-cover transition-transform duration-[3000ms] group-hover:scale-110"
+                />
+                <span className="label-chip absolute bottom-3 left-3">● Rendering 00:08</span>
+                <span className="absolute inset-x-0 bottom-0 h-1 origin-left scale-x-0 bg-[image:var(--gradient-aurora)] transition-transform duration-[3000ms] ease-linear group-hover:scale-x-100" />
+              </>
+            }
+          />
+          <FeatureShowcase
+            chip="Continuity"
+            title="Left stays left."
+            line="The locked plate pins subject positions, so nobody mirrors or gets recast mid-edit."
+            delay={200}
+            media={
+              <BeforeAfter
+                before={heroStreet}
+                after={layerBandana}
+                beforeLabel="Plate"
+                afterLabel="Edited"
+                alt="Positions preserved between plate and edit"
+                className="h-full w-full rounded-none border-0"
+              />
+            }
+          />
+          <FeatureShowcase
+            chip="Export"
+            title="PNG + layered ZIP."
+            line="Composite, every layer, and the recipe that made them — one download."
+            delay={100}
+            media={
+              <div className="grid h-full grid-cols-3 gap-1 p-1">
+                {[heroStreet, layerChains, layerBraids, layerBandana, demoMotion, demoCharsheet].map(
+                  (src, i) => (
+                    <span key={i} className="relative overflow-hidden rounded-md">
+                      <img
+                        src={src}
+                        alt=""
+                        aria-hidden
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:-translate-y-1"
+                        style={{ transitionDelay: `${i * 60}ms` }}
+                      />
+                      <span className="absolute right-1 bottom-1 font-[family-name:var(--font-mono-ui)] text-[0.5rem] text-accent">
+                        .png
+                      </span>
+                    </span>
+                  ),
+                )}
+              </div>
+            }
+          />
+          <FeatureShowcase
+            chip="Projects"
+            title="Revisit any shoot."
+            line="Every layer, prompt and engine is saved — reopen a shoot weeks later and keep editing."
+            delay={200}
+            media={
+              <div className="flex h-full items-center gap-3 overflow-hidden p-4">
+                {[layerChains, layerBraids, layerBandana].map((src, i) => (
+                  <span
+                    key={i}
+                    className="glow-frame h-full flex-1 transition-transform duration-500 group-hover:-rotate-2"
+                    style={{ transform: `rotate(${(i - 1) * 3}deg)` }}
+                  >
+                    <img src={src} alt="" aria-hidden loading="lazy" className="h-full w-full object-cover" />
+                  </span>
+                ))}
+              </div>
+            }
+          />
+          <FeatureShowcase
+            chip="Storyboard"
+            title="Layers become shots."
+            line="Stack edits in order and Aurora reads them as a shot sequence, ready to animate."
+            delay={300}
+            media={
+              <div className="flex h-full items-end gap-2 p-4">
+                {[heroStreet, layerBandana, layerChains, layerBraids, demoMotion].map((src, i) => (
+                  <span
+                    key={i}
+                    className="relative flex-1 overflow-hidden rounded-md transition-all duration-500"
+                    style={{ height: `${52 + i * 10}%`, transitionDelay: `${i * 70}ms` }}
+                  >
+                    <img src={src} alt="" aria-hidden loading="lazy" className="h-full w-full object-cover" />
+                    <span className="absolute bottom-1 left-1 font-[family-name:var(--font-mono-ui)] text-[0.5rem] text-accent">
+                      SH{i + 1}
+                    </span>
+                  </span>
+                ))}
+              </div>
+            }
+          />
+        </div>
+      </section>
+
+      {/* ENGINE WALL */}
+      <section className="border-y border-border bg-card/40">
+        <div className="mx-auto max-w-6xl px-5 py-24">
+          <Reveal>
+            <p className="font-[family-name:var(--font-mono-ui)] text-xs tracking-[0.3em] text-accent uppercase">
+              Engine room
+            </p>
+            <h2 className="headline mt-4 text-[clamp(2.3rem,7vw,4.5rem)]">
+              Every engine.
+              <span className="gradient-text block">One frame.</span>
+            </h2>
+          </Reveal>
+
+          <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {engines.map((e, i) => (
+              <Reveal key={e.name} delay={i * 60}>
+                <figure className="glow-frame group relative aspect-square bg-card">
+                  <img
+                    src={e.frame}
+                    alt={`${e.name} sample frame`}
+                    loading="lazy"
+                    className="h-full w-full object-cover opacity-70 transition-all duration-500 group-hover:scale-105 group-hover:opacity-100"
+                  />
+                  <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background to-transparent p-3">
+                    <span className="font-[family-name:var(--font-mono-ui)] text-[0.55rem] tracking-[0.2em] text-accent uppercase">
+                      {e.kind}
+                    </span>
+                    <p className="text-sm font-bold">{e.name}</p>
+                  </figcaption>
+                </figure>
+              </Reveal>
+            ))}
+          </div>
+
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {brains.map((b, i) => (
+              <Reveal key={b.name} delay={i * 70}>
+                <div className="relative h-full overflow-hidden rounded-2xl border border-border bg-card p-5">
+                  <div className="mb-4 flex h-10 items-end gap-1">
+                    {Array.from({ length: 14 }).map((_, k) => (
+                      <span
+                        key={k}
+                        className="flex-1 rounded-sm bg-[image:var(--gradient-aurora)]"
+                        style={{
+                          height: `${25 + Math.abs(Math.sin((k + i) * 1.3)) * 75}%`,
+                          opacity: 0.35 + Math.abs(Math.sin((k + i) * 0.9)) * 0.65,
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <p className="text-sm font-bold">{b.name}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{b.note}</p>
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* STUDIO */}
+      <section id="studio" className="dotfield">
+        <div className="mx-auto max-w-6xl px-5 py-24">
+          <Reveal>
+            <p className="font-[family-name:var(--font-mono-ui)] text-xs tracking-[0.3em] text-accent uppercase">
+              Live — the studio
+            </p>
+            <h2 className="headline mt-4 text-[clamp(2.3rem,7vw,4.5rem)]">
+              Direct your <span className="gradient-text">shoot.</span>
+            </h2>
+          </Reveal>
           <div className="mt-10 grid gap-6">
             <DirectorAgent />
             <LayerStudio />
           </div>
         </div>
-      </section>
-
-
-      {/* DECOMPOSE */}
-      <section id="decompose" className="dotfield mx-auto max-w-6xl px-5 py-24">
-        <p className="font-[family-name:var(--font-mono-ui)] text-xs tracking-[0.3em] text-accent uppercase">
-          Step one — Decompose
-        </p>
-        <h2 className="headline mt-4 text-[clamp(2.3rem,7vw,4.5rem)]">
-          One upload.
-          <span className="gradient-text block">20+ elements.</span>
-        </h2>
-
-        <div className="mt-12 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="glow-frame relative bg-card p-3">
-            <span className="label-chip absolute -top-4 left-6">The edit panel</span>
-            <img
-              src={heroStreet}
-              alt="Source photo loaded on the editing canvas"
-              loading="lazy"
-              className="aspect-4/5 w-full rounded-xl object-cover"
-            />
-            <div className="mt-3 flex items-center gap-3 rounded-full bg-secondary px-4 py-2 font-[family-name:var(--font-mono-ui)] text-[0.65rem] text-muted-foreground">
-              <span>select</span>
-              <span>move</span>
-              <span>crop</span>
-              <span className="ml-auto text-accent">100%</span>
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-6">
-            <div className="rounded-2xl border border-border bg-card p-5">
-              <p className="font-[family-name:var(--font-mono-ui)] text-[0.65rem] tracking-[0.25em] text-muted-foreground uppercase">
-                Edit image
-              </p>
-              <ul className="mt-4 space-y-1">
-                {panelItems.map(([label, tag]) => (
-                  <li
-                    key={label}
-                    className="flex items-center justify-between rounded-lg px-3 py-2 text-sm transition-colors hover:bg-secondary"
-                  >
-                    <span>{label}</span>
-                    {tag ? (
-                      <span className="font-[family-name:var(--font-mono-ui)] text-[0.6rem] text-accent uppercase">
-                        {tag}
-                      </span>
-                    ) : (
-                      <span className="text-muted-foreground">›</span>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div className="glow-frame relative bg-card p-5">
-              <span className="label-chip absolute -top-4 right-5">2K · Fast</span>
-              <p className="font-[family-name:var(--font-mono-ui)] text-[0.65rem] tracking-[0.25em] text-muted-foreground uppercase">
-                Resolution
-              </p>
-              <div className="mt-2 grid grid-cols-3 gap-1 rounded-full bg-secondary p-1 text-center text-sm">
-                <span className="rounded-full py-2 text-muted-foreground">1K</span>
-                <span className="rounded-full py-2 text-muted-foreground">1.5K</span>
-                <span className="rounded-full bg-muted py-2 font-bold">2K</span>
-              </div>
-              <p className="mt-5 font-[family-name:var(--font-mono-ui)] text-[0.65rem] tracking-[0.25em] text-muted-foreground uppercase">
-                Mode
-              </p>
-              <div className="mt-2 grid grid-cols-2 gap-1 rounded-full bg-secondary p-1 text-center text-sm">
-                <span className="rounded-full py-2 text-muted-foreground">Standard</span>
-                <span className="rounded-full bg-muted py-2 font-bold">Fast</span>
-              </div>
-              <p className="mt-5 font-[family-name:var(--font-mono-ui)] text-[0.65rem] tracking-[0.25em] text-muted-foreground uppercase">
-                Layers
-              </p>
-              <div className="mt-2 h-9 overflow-hidden rounded-full bg-secondary">
-                <div className="btn-aurora flex h-full w-1/2 items-center rounded-full px-4 text-sm font-bold">
-                  8
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <ol className="mt-12 space-y-4">
-          {steps.map((s) => (
-            <li key={s.n} className="flex gap-4 text-lg sm:text-xl">
-              <span className="font-[family-name:var(--font-mono-ui)] text-sm text-accent">
-                {s.n}
-              </span>
-              <p>
-                <strong className="font-extrabold">{s.strong}</strong>{" "}
-                <span className="text-muted-foreground">{s.rest}</span>
-              </p>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      {/* LAYER EDIT */}
-      <section id="edit" className="border-y border-border bg-card/40">
-        <div className="mx-auto max-w-6xl px-5 py-24">
-          <p className="font-[family-name:var(--font-mono-ui)] text-xs tracking-[0.3em] text-accent uppercase">
-            The layer edit
-          </p>
-          <h2 className="headline mt-4 text-[clamp(2.3rem,7vw,4.5rem)]">
-            Ice him out.
-            <span className="gradient-text block">Nothing else moves.</span>
-          </h2>
-
-          <div className="mt-12 grid items-center gap-6 md:grid-cols-2">
-            <div className="glow-frame relative bg-card">
-              <span className="label-chip absolute -top-4 left-5 z-10">Select him + type</span>
-              <img
-                src={heroStreet}
-                alt="Original frame with the subject selected"
-                loading="lazy"
-                className="aspect-4/5 w-full object-cover"
-              />
-              <div className="absolute right-4 bottom-4 left-4 flex items-center gap-3 rounded-full bg-background/85 px-4 py-3 text-sm backdrop-blur">
-                <span className="text-accent">+</span>
-                <span className="truncate text-muted-foreground">
-                  iced-out cuban links and diamond grillz
-                </span>
-                <span className="btn-aurora ml-auto grid size-7 place-items-center rounded-full">
-                  ✦
-                </span>
-              </div>
-            </div>
-
-            <div className="glow-frame relative bg-card">
-              <span className="label-chip absolute -top-4 right-5 z-10">Chained up</span>
-              <img
-                src={layerChains}
-                alt="Same frame with the subject wearing iced-out cuban links"
-                loading="lazy"
-                className="aspect-4/5 w-full object-cover"
-              />
-            </div>
-          </div>
-
-          <ul className="mt-10 space-y-3 text-lg">
-            <li>
-              <span className="mr-3 text-accent">→</span>One sentence:{" "}
-              <strong>"iced-out cuban links and diamond grillz."</strong>
-            </li>
-            <li>
-              <span className="mr-3 text-accent">→</span>His pose holds. Her side of the frame{" "}
-              <strong>never re-renders.</strong>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      {/* FACE SWAP */}
-      <section className="mx-auto max-w-6xl px-5 py-24">
-        <p className="font-[family-name:var(--font-mono-ui)] text-xs tracking-[0.3em] text-accent uppercase">
-          One more — her layer this time
-        </p>
-        <h2 className="headline mt-4 text-[clamp(2.3rem,7vw,4.5rem)]">
-          New look.
-          <span className="gradient-text block">Same frame.</span>
-        </h2>
-
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
-          <div className="glow-frame relative bg-card">
-            <span className="label-chip absolute -top-4 left-5 z-10">
-              "Neon braids + varsity jacket"
-            </span>
-            <img
-              src={heroStreet}
-              alt="Original frame before the layer is edited"
-              loading="lazy"
-              className="aspect-4/5 w-full object-cover"
-            />
-          </div>
-          <div className="glow-frame relative bg-card">
-            <span className="label-chip absolute -top-4 right-5 z-10">Swapped</span>
-            <img
-              src={layerBraids}
-              alt="Same frame with neon-green braids and an oversized varsity jacket"
-              loading="lazy"
-              className="aspect-4/5 w-full object-cover"
-            />
-          </div>
-        </div>
-
-        <p className="mt-10 max-w-3xl text-lg text-muted-foreground">
-          The fit lands, <strong className="text-foreground">light and shadow stay honest.</strong>{" "}
-          The wall, the chains, the pose — untouched. Stack as many swaps as you want on one frame.
-        </p>
       </section>
 
       {/* CTA */}
@@ -344,9 +455,6 @@ function Index() {
             Turn flat images
             <span className="gradient-text block">into editable layers.</span>
           </h2>
-          <p className="mx-auto mt-6 max-w-xl text-muted-foreground">
-            Separate, edit, and rebuild any image. Every element, now yours to edit.
-          </p>
           <a
             href="#studio"
             className="btn-aurora mt-8 inline-block rounded-full px-10 py-4 text-sm font-bold tracking-widest uppercase transition-transform hover:scale-[1.03]"
