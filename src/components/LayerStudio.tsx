@@ -56,6 +56,7 @@ export function LayerStudio() {
   const [isFinal, setIsFinal] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [gpuMode, setGpuMode] = useState<GpuStatus>("cpu");
   const [projects, setProjects] = useState<LayerProject[]>([]);
   const [projectId, setProjectId] = useState<string>(() => crypto.randomUUID());
   const [name, setName] = useState("Untitled shoot");
