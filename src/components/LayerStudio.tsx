@@ -64,7 +64,10 @@ export function LayerStudio() {
   const characterRef = useRef<HTMLInputElement>(null);
   const runRef = useRef<((prompt: string, target?: Shot) => Promise<void>) | null>(null);
 
-  useEffect(() => setProjects(loadProjects()), []);
+  useEffect(() => {
+    setProjects(loadProjects());
+    setGpuMode(gpuStatus());
+  }, []);
 
   const result = shots.find((s) => s.id === active)?.dataUrl ?? null;
   const identityGraph = bible ? compileIdentityGraph(bible) : "";
