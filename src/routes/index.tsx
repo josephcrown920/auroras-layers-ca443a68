@@ -459,7 +459,7 @@ function Index() {
       {/* CTA */}
       <section className="border-t border-border">
         <div className="gradient-surface mx-auto max-w-4xl px-5 py-24 text-center">
-          <h2 className="headline text-[clamp(2.5rem,8vw,5rem)]">
+          <h2 className="headline text-[clamp(2.3rem,7vw,4.5rem)]">
             Turn flat images
             <span className="gradient-text block">into editable layers.</span>
           </h2>

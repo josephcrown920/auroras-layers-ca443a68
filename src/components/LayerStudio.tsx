@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { streamImage } from "@/lib/streamImage";
+import { composeSheet, gpuStatus, type GpuStatus } from "@/lib/gpuCompose";
 import { onStudioCommand } from "@/lib/studioBus";
 import { saveCloudProject } from "@/lib/cloudProjects";
 import { useBibles } from "@/lib/bibleStore";
@@ -55,6 +56,7 @@ export function LayerStudio() {
   const [isFinal, setIsFinal] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [gpuMode, setGpuMode] = useState<GpuStatus>("cpu");
   const [projects, setProjects] = useState<LayerProject[]>([]);
   const [projectId, setProjectId] = useState<string>(() => crypto.randomUUID());
   const [name, setName] = useState("Untitled shoot");
@@ -62,7 +64,10 @@ export function LayerStudio() {
   const characterRef = useRef<HTMLInputElement>(null);
   const runRef = useRef<((prompt: string, target?: Shot) => Promise<void>) | null>(null);
 
-  useEffect(() => setProjects(loadProjects()), []);
+  useEffect(() => {
+    setProjects(loadProjects());
+    setGpuMode(gpuStatus());
+  }, []);
 
   const result = shots.find((s) => s.id === active)?.dataUrl ?? null;
   const identityGraph = bible ? compileIdentityGraph(bible) : "";
@@ -210,7 +215,21 @@ export function LayerStudio() {
     }
   }
 
+  async function composeSheetNow() {
+    try {
+      const frames = sequence(shots)
+        .map((s) => s.dataUrl)
+        .filter(Boolean);
+      const { dataUrl, status } = await composeSheet(frames);
+      setGpuMode(status);
+      downloadDataUrl(dataUrl, "aurora-composite.png");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Compose failed");
+    }
+  }
+
   const ordered = sequence(shots);
+
 
   return (
     <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
@@ -571,11 +590,22 @@ export function LayerStudio() {
             </button>
             <button
               type="button"
+              onClick={() => void composeSheetNow()}
+              disabled={busy}
+              className="rounded-full border border-border px-4 py-2 text-[0.7rem] font-bold tracking-wider uppercase transition-colors hover:border-primary hover:text-primary disabled:opacity-50"
+            >
+              Composite sheet
+            </button>
+            <button
+              type="button"
               onClick={() => void exportProjectZip(currentProject())}
               className="btn-aurora rounded-full px-4 py-2 text-[0.7rem] font-bold tracking-wider uppercase"
             >
               Export ZIP
             </button>
+            <span className="self-center rounded-full border border-border px-3 py-1 text-[0.6rem] tracking-wider text-muted-foreground uppercase">
+              {gpuMode === "webgpu" ? "● GPU accelerated" : "○ CPU compose"}
+            </span>
           </div>
         ) : null}
       </div>
