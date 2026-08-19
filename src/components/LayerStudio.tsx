@@ -571,11 +571,22 @@ export function LayerStudio() {
             </button>
             <button
               type="button"
+              onClick={() => void composeSheetNow()}
+              disabled={busy}
+              className="rounded-full border border-border px-4 py-2 text-[0.7rem] font-bold tracking-wider uppercase transition-colors hover:border-primary hover:text-primary disabled:opacity-50"
+            >
+              Composite sheet
+            </button>
+            <button
+              type="button"
               onClick={() => void exportProjectZip(currentProject())}
               className="btn-aurora rounded-full px-4 py-2 text-[0.7rem] font-bold tracking-wider uppercase"
             >
               Export ZIP
             </button>
+            <span className="self-center rounded-full border border-border px-3 py-1 text-[0.6rem] tracking-wider text-muted-foreground uppercase">
+              {gpuMode === "webgpu" ? "● GPU accelerated" : "○ CPU compose"}
+            </span>
           </div>
         ) : null}
       </div>
