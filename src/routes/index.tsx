@@ -97,15 +97,15 @@ function Index() {
           <div className="grid gap-10 py-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <div>
               <p className="font-[family-name:var(--font-mono-ui)] text-[0.68rem] tracking-[0.3em] text-accent uppercase">
-                ● By artists, for artists
+                ● The rest of the frame never moves
               </p>
               <h1 className="headline text-shadow-hard mt-5 text-[clamp(2.9rem,9vw,6.2rem)]">
-                Generate once.
-                <span className="gradient-text block">Edit forever.</span>
+                One frame.
+                <span className="gradient-text block">Infinite layers.</span>
               </h1>
               <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-                Aurora reads your frame, splits it into layers, and re-renders only the one you
-                name. Style, motion, likeness — intact.
+                Upload any image, name the layer you want to change, and Aurora re-renders only that
+                element. The background, the people, the light — everything else stays locked.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
@@ -122,6 +122,7 @@ function Index() {
                 </a>
               </div>
             </div>
+
 
             {/* live proof, not copy */}
             <Reveal className="relative">
