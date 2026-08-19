@@ -211,7 +211,21 @@ export function LayerStudio() {
     }
   }
 
+  async function composeSheetNow() {
+    try {
+      const frames = sequence(shots)
+        .map((s) => s.dataUrl)
+        .filter(Boolean);
+      const { dataUrl, status } = await composeSheet(frames);
+      setGpuMode(status);
+      downloadDataUrl(dataUrl, "aurora-composite.png");
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Compose failed");
+    }
+  }
+
   const ordered = sequence(shots);
+
 
   return (
     <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
