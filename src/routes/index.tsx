@@ -375,7 +375,7 @@ function Index() {
         </div>
       </section>
 
-      {/* ENGINE WALL */}
+      {/* ENGINE WALL — model names only */}
       <section className="border-y border-border bg-card/40">
         <div className="mx-auto max-w-6xl px-5 py-24">
           <Reveal>
@@ -391,20 +391,9 @@ function Index() {
           <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {engines.map((e, i) => (
               <Reveal key={e.name} delay={i * 60}>
-                <figure className="glow-frame group relative aspect-square bg-card">
-                  <img
-                    src={e.frame}
-                    alt={`${e.name} sample frame`}
-                    loading="lazy"
-                    className="h-full w-full object-cover opacity-70 transition-all duration-500 group-hover:scale-105 group-hover:opacity-100"
-                  />
-                  <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background to-transparent p-3">
-                    <span className="font-[family-name:var(--font-mono-ui)] text-[0.55rem] tracking-[0.2em] text-accent uppercase">
-                      {e.kind}
-                    </span>
-                    <p className="text-sm font-bold">{e.name}</p>
-                  </figcaption>
-                </figure>
+                <div className="glow-frame flex aspect-square items-center justify-center bg-card p-4 text-center transition-transform duration-500 hover:-translate-y-1">
+                  <p className="text-sm font-bold">{e.name}</p>
+                </div>
               </Reveal>
             ))}
           </div>
@@ -413,26 +402,14 @@ function Index() {
             {brains.map((b, i) => (
               <Reveal key={b.name} delay={i * 70}>
                 <div className="relative h-full overflow-hidden rounded-2xl border border-border bg-card p-5">
-                  <div className="mb-4 flex h-10 items-end gap-1">
-                    {Array.from({ length: 14 }).map((_, k) => (
-                      <span
-                        key={k}
-                        className="flex-1 rounded-sm bg-[image:var(--gradient-aurora)]"
-                        style={{
-                          height: `${25 + Math.abs(Math.sin((k + i) * 1.3)) * 75}%`,
-                          opacity: 0.35 + Math.abs(Math.sin((k + i) * 0.9)) * 0.65,
-                        }}
-                      />
-                    ))}
-                  </div>
                   <p className="text-sm font-bold">{b.name}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{b.note}</p>
                 </div>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
+
 
       {/* STUDIO */}
       <section id="studio" className="dotfield">
