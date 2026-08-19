@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { streamImage } from "@/lib/streamImage";
+import { composeSheet, gpuStatus, type GpuStatus } from "@/lib/gpuCompose";
 import { onStudioCommand } from "@/lib/studioBus";
 import { saveCloudProject } from "@/lib/cloudProjects";
 import { useBibles } from "@/lib/bibleStore";
