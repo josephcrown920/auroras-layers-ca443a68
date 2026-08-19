@@ -21,17 +21,17 @@ import demoLayerstack from "@/assets/demo-layerstack.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Aurora Layers — Generate Once. Edit Forever." },
+      { title: "Aurora Layers — One Frame. Infinite Layers." },
       {
         name: "description",
         content:
-          "Aurora Performance Studio turns any flat image into 20+ editable layers. Swap an outfit, a face, a whole subject — the rest of the frame never re-renders.",
+          "Aurora turns any flat image into editable layers. Name the layer you want to change — the rest of the frame never moves.",
       },
-      { property: "og:title", content: "Aurora Layers — Generate Once. Edit Forever." },
+      { property: "og:title", content: "Aurora Layers — One Frame. Infinite Layers." },
       {
         property: "og:description",
         content:
-          "One upload, 20+ elements. Select a layer, type a sentence, and everything else stays exactly where it was.",
+          "Upload any image, name the layer, and re-render only that element. Every background, every person, every light stays locked.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -39,6 +39,7 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
+
 
 const peelLayers = [
   { label: "Plate", src: heroStreet },
