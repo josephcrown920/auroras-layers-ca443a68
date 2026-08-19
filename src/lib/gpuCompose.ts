@@ -15,6 +15,11 @@ export function gpuStatus(): GpuStatus {
 
 const CELL = 512;
 
+const G = globalThis as unknown as {
+  GPUTextureUsage: { TEXTURE_BINDING: number; COPY_DST: number; RENDER_ATTACHMENT: number };
+  GPUBufferUsage: { UNIFORM: number; COPY_DST: number };
+};
+
 function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -103,7 +108,7 @@ async function composeWebGPU(images: HTMLImageElement[]): Promise<string> {
       size: [img.naturalWidth, img.naturalHeight],
       format: "rgba8unorm",
       usage:
-        GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT,
+        G.GPUTextureUsage.TEXTURE_BINDING | G.GPUTextureUsage.COPY_DST | G.GPUTextureUsage.RENDER_ATTACHMENT,
     });
     device.queue.copyExternalImageToTexture(
       { source: img },
@@ -113,7 +118,7 @@ async function composeWebGPU(images: HTMLImageElement[]): Promise<string> {
 
     const col = i % cols;
     const row = Math.floor(i / cols);
-    const uniform = device.createBuffer({ size: 16, usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST });
+    const uniform = device.createBuffer({ size: 16, usage: G.GPUBufferUsage.UNIFORM | G.GPUBufferUsage.COPY_DST });
     device.queue.writeBuffer(
       uniform,
       0,
