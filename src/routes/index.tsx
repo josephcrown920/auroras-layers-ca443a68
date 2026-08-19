@@ -21,17 +21,17 @@ import demoLayerstack from "@/assets/demo-layerstack.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Aurora Layers — Generate Once. Edit Forever." },
+      { title: "Aurora Layers — One Frame. Infinite Layers." },
       {
         name: "description",
         content:
-          "Aurora Performance Studio turns any flat image into 20+ editable layers. Swap an outfit, a face, a whole subject — the rest of the frame never re-renders.",
+          "Aurora turns any flat image into editable layers. Name the layer you want to change — the rest of the frame never moves.",
       },
-      { property: "og:title", content: "Aurora Layers — Generate Once. Edit Forever." },
+      { property: "og:title", content: "Aurora Layers — One Frame. Infinite Layers." },
       {
         property: "og:description",
         content:
-          "One upload, 20+ elements. Select a layer, type a sentence, and everything else stays exactly where it was.",
+          "Upload any image, name the layer, and re-render only that element. Every background, every person, every light stays locked.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -39,6 +39,7 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
+
 
 const peelLayers = [
   { label: "Plate", src: heroStreet },
@@ -97,15 +98,15 @@ function Index() {
           <div className="grid gap-10 py-14 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <div>
               <p className="font-[family-name:var(--font-mono-ui)] text-[0.68rem] tracking-[0.3em] text-accent uppercase">
-                ● By artists, for artists
+                ● The rest of the frame never moves
               </p>
               <h1 className="headline text-shadow-hard mt-5 text-[clamp(2.9rem,9vw,6.2rem)]">
-                Generate once.
-                <span className="gradient-text block">Edit forever.</span>
+                One frame.
+                <span className="gradient-text block">Infinite layers.</span>
               </h1>
               <p className="mt-6 max-w-xl text-lg text-muted-foreground">
-                Aurora reads your frame, splits it into layers, and re-renders only the one you
-                name. Style, motion, likeness — intact.
+                Upload any image, name the layer you want to change, and Aurora re-renders only that
+                element. The background, the people, the light — everything else stays locked.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
@@ -122,6 +123,7 @@ function Index() {
                 </a>
               </div>
             </div>
+
 
             {/* live proof, not copy */}
             <Reveal className="relative">
@@ -374,7 +376,7 @@ function Index() {
         </div>
       </section>
 
-      {/* ENGINE WALL */}
+      {/* ENGINE WALL — model names only */}
       <section className="border-y border-border bg-card/40">
         <div className="mx-auto max-w-6xl px-5 py-24">
           <Reveal>
@@ -390,20 +392,9 @@ function Index() {
           <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {engines.map((e, i) => (
               <Reveal key={e.name} delay={i * 60}>
-                <figure className="glow-frame group relative aspect-square bg-card">
-                  <img
-                    src={e.frame}
-                    alt={`${e.name} sample frame`}
-                    loading="lazy"
-                    className="h-full w-full object-cover opacity-70 transition-all duration-500 group-hover:scale-105 group-hover:opacity-100"
-                  />
-                  <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-background to-transparent p-3">
-                    <span className="font-[family-name:var(--font-mono-ui)] text-[0.55rem] tracking-[0.2em] text-accent uppercase">
-                      {e.kind}
-                    </span>
-                    <p className="text-sm font-bold">{e.name}</p>
-                  </figcaption>
-                </figure>
+                <div className="glow-frame flex aspect-square items-center justify-center bg-card p-4 text-center transition-transform duration-500 hover:-translate-y-1">
+                  <p className="text-sm font-bold">{e.name}</p>
+                </div>
               </Reveal>
             ))}
           </div>
@@ -412,26 +403,14 @@ function Index() {
             {brains.map((b, i) => (
               <Reveal key={b.name} delay={i * 70}>
                 <div className="relative h-full overflow-hidden rounded-2xl border border-border bg-card p-5">
-                  <div className="mb-4 flex h-10 items-end gap-1">
-                    {Array.from({ length: 14 }).map((_, k) => (
-                      <span
-                        key={k}
-                        className="flex-1 rounded-sm bg-[image:var(--gradient-aurora)]"
-                        style={{
-                          height: `${25 + Math.abs(Math.sin((k + i) * 1.3)) * 75}%`,
-                          opacity: 0.35 + Math.abs(Math.sin((k + i) * 0.9)) * 0.65,
-                        }}
-                      />
-                    ))}
-                  </div>
                   <p className="text-sm font-bold">{b.name}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{b.note}</p>
                 </div>
               </Reveal>
             ))}
           </div>
         </div>
       </section>
+
 
       {/* STUDIO */}
       <section id="studio" className="dotfield">
