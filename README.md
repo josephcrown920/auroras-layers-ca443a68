@@ -66,3 +66,62 @@ Run button so you always know why a render didn't land.
 3. Upload a reference image (optional), pick an engine, keep **Lock identity** on.
 4. **Run layer edit**, then **Stack another layer** for each change.
 5. **Save project** and **Export ZIP**.
+
+## Embedding Aurora Layers in auroraperformancestudio.com
+
+The studio ships an embed-only route: `/embed`. It renders the full LayerStudio
+with every brand token, gradient, engine and export intact — no landing page chrome.
+
+### 1. Plain HTML (any stack: Webflow, WordPress, Next, Replit, Framer)
+
+```html
+<iframe
+  id="aurora-layers"
+  src="https://<your-published-url>/embed"
+  style="width:100%;height:1400px;border:0;background:#0b0614;border-radius:24px"
+  allow="clipboard-write; camera"
+  loading="lazy"
+  title="Aurora Layers Studio"
+></iframe>
+<script>
+  window.addEventListener("message", (e) => {
+    if (e.data?.source === "aurora-layers" && e.data.type === "height") {
+      document.getElementById("aurora-layers").style.height = e.data.height + "px";
+    }
+  });
+</script>
+```
+
+### 2. React component
+
+```tsx
+export function AuroraLayersEmbed({ src = "https://<your-published-url>/embed" }) {
+  const ref = useRef<HTMLIFrameElement>(null);
+  useEffect(() => {
+    const onMsg = (e: MessageEvent) => {
+      if (e.data?.source === "aurora-layers" && e.data.type === "height" && ref.current) {
+        ref.current.style.height = `${e.data.height}px`;
+      }
+    };
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, []);
+  return (
+    <iframe
+      ref={ref}
+      src={src}
+      title="Aurora Layers Studio"
+      className="w-full rounded-3xl border-0 bg-[#0b0614]"
+      style={{ height: 1400 }}
+      allow="clipboard-write; camera"
+    />
+  );
+}
+```
+
+### Notes
+- Appearance and settings are preserved because the studio runs on its own deployment;
+  the host site's CSS never touches it.
+- Projects are saved per-origin (cloud + localStorage), so the embed keeps its own history.
+- Use a subdomain such as `layers.auroraperformancestudio.com` (custom domain in Publish
+  settings) if you want the embed to share the main site's domain.
