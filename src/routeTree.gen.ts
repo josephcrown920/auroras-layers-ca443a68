@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EmbedRouteImport } from './routes/embed'
 import { Route as ApiDirectorRouteImport } from './routes/api/director'
 import { Route as ApiGenerateImageRouteImport } from './routes/api/generate-image'
 import { Route as ApiProductionRouteImport } from './routes/api/production'
@@ -17,6 +18,11 @@ import { Route as ApiProductionRouteImport } from './routes/api/production'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmbedRoute = EmbedRouteImport.update({
+  id: '/embed',
+  path: '/embed',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiDirectorRoute = ApiDirectorRouteImport.update({
@@ -37,12 +43,14 @@ const ApiProductionRoute = ApiProductionRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/embed': typeof EmbedRoute
   '/api/director': typeof ApiDirectorRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/production': typeof ApiProductionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/embed': typeof EmbedRoute
   '/api/director': typeof ApiDirectorRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/production': typeof ApiProductionRoute
@@ -50,18 +58,22 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/embed': typeof EmbedRoute
   '/api/director': typeof ApiDirectorRoute
   '/api/generate-image': typeof ApiGenerateImageRoute
   '/api/production': typeof ApiProductionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/director' | '/api/generate-image' | '/api/production'
+  fullPaths:
+    '/' | '/embed' | '/api/director' | '/api/generate-image' | '/api/production'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/director' | '/api/generate-image' | '/api/production'
+  to:
+    '/' | '/embed' | '/api/director' | '/api/generate-image' | '/api/production'
   id:
     | '__root__'
     | '/'
+    | '/embed'
     | '/api/director'
     | '/api/generate-image'
     | '/api/production'
@@ -69,6 +81,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EmbedRoute: typeof EmbedRoute
   ApiDirectorRoute: typeof ApiDirectorRoute
   ApiGenerateImageRoute: typeof ApiGenerateImageRoute
   ApiProductionRoute: typeof ApiProductionRoute
@@ -81,6 +94,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/embed': {
+      id: '/embed'
+      path: '/embed'
+      fullPath: '/embed'
+      preLoaderRoute: typeof EmbedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/director': {
@@ -109,6 +129,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EmbedRoute: EmbedRoute,
   ApiDirectorRoute: ApiDirectorRoute,
   ApiGenerateImageRoute: ApiGenerateImageRoute,
   ApiProductionRoute: ApiProductionRoute,
